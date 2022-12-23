@@ -18,9 +18,13 @@ const CLI = async () => {
                     socket.emit('search', { 'query': answers.name });
                     socket.on('search', (res) => {
                         const { resultCount, page, name, films } = res;
-                        console.log(`(${page}/${resultCount}) ${name} - [${films}]`);
-                        if (page === resultCount ) {
-                            resolve(true);
+                        if (resultCount < 1 ) {
+                            reject(`ERR: No valid matches found for query ${answers.name}`);
+                        } else {
+                            console.log(`(${page}/${resultCount}) ${name} - [${films}]`);
+                            if (page === resultCount ) {
+                                resolve(true);
+                            }
                         }
                     });
                     socket.on('error', () => {
@@ -29,7 +33,7 @@ const CLI = async () => {
                 });
                 CLI();
             } catch (error) {
-                console.log('Error: ', error);
+                console.log(error);
                 CLI();
             }
         });
